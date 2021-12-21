@@ -1,0 +1,28 @@
+name: Build and Test
+
+on: [push, pull_request]
+
+env:
+  CMAKE_FLAGS: ''
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Template Code
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Build
+        run: |
+          mkdir $GITHUB_WORKSPACE/build
+          cd $GITHUB_WORKSPACE/build
+          cmake $GITHUB_WORKSPACE ${{ env.CMAKE_FLAGS }}
+          cmake --build $GITHUB_WORKSPACE/build
+
+      - name: Tests
+        run: |
+          cd $GITHUB_WORKSPACE/build/experiments
+          ctest --output-on-failure
